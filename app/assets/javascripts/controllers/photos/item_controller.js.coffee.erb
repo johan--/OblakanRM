@@ -1,0 +1,32 @@
+# for more details see: http://emberjs.com/guides/controllers/
+
+OblakanRM.PhotosItemController = Ember.ObjectController.extend
+  current_user: OblakanRM.get_current_user()
+  needs: ['report']
+  report: Ember.computed.alias('controllers.report')
+
+  actions:
+    delete: ->
+        model = @get('model')
+        @get('store').find('report', model.get('entity_id')).then (report) =>
+            start_photo_id = parseInt(report.get('start_photo_id'))
+            model.deleteRecord()
+            model.save().then =>
+                report.set('photos', report.get('photos').removeObject(model))
+                toastr.success('', 'Фото удалено')
+                if start_photo_id == parseInt(model.get('id'))
+                    report.set('start_photo', null)
+            , (reason) ->
+                console.log reason
+                toastr.error('', 'Возникла ошибка при удалении фото')
+
+     set_main: ->
+         model = @get('model')
+         @get('store').find('report', model.get('entity_id')).then (report) ->
+             report.set('start_photo_id', model.get('id'))
+             report.set('start_photo', model)
+             report.save().then =>
+                toastr.success('', 'Фото сделано главным')
+             , (reason) ->
+                console.log reason
+                toastr.error('', 'Возникла ошибка при изменении фото')

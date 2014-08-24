@@ -1,0 +1,42 @@
+div.content
+  div class="media"
+    if start_photo
+      a class="pull-left" href=start_photo.original_url data-lightbox="start-photo"
+        img class="media-object" width="300" alt="..." src=start_photo.medium_thumb
+    else
+      div.pull-left
+        img class="media-object" width="300" alt="..." src="<%= asset_path '300x200.gif' %>"
+    div.media-body.meta
+      dl.dl-horizontal
+        dt Дата
+        dd
+          time created_at
+
+        if address
+            dt Адрес
+            dd.address #{short_address}
+
+        if isEditable
+          dt Категория
+          dd.category
+            category-select selectionBinding="model.category" contentBinding="categories" optionLabelPath="content.title" optionValuePath="content.id" prompt="1" valueBinding="selectedCategory" optionIconPath="content.icon"
+        else
+          if category
+            dt Категория
+            if category.icon
+                dd.category <i class="fa fa-#{unbound category.icon}"></i> #{category.title}
+            else
+                dd.category #{category.title}
+
+        dt #{partial inline_reported}
+        dd #{partial inline_user}
+
+        if subscribers_count
+            dt Подписчики
+            dd #{subscribers_count}
+
+  div.description
+    if isEditable
+      = c-textarea class="form-control" value=model.description placeholder="Описание проблемы" id="report_description"
+    else
+      p #{nl2br model.description}

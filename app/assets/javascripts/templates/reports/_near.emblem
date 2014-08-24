@@ -1,0 +1,14 @@
+div.panel.pull-right
+  div class="panel panel-default"
+    div class="panel-heading"
+      h3.panel-title.pull-left Рядом
+      div.pull-right 1 км
+      div.clear-fix
+
+    div.panel-body
+      if model.near.length
+        ul
+          each report in model.near
+            li = linkTo 'report' report | #{report.title}
+      else
+        p Нет ближайших проблем.

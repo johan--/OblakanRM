@@ -1,0 +1,43 @@
+header
+  nav class="navbar navbar-default" role="navigation"
+    div.container
+        div class="navbar-header"
+          button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"
+            span class="sr-only" Toggle navigation
+            span class="icon-bar"
+            span class="icon-bar"
+            span class="icon-bar"
+          = linkTo 'index' classNames="navbar-brand" | Карта проблем
+
+        div.navbar-text.announcing#address-block Абакан
+
+        div.navbar-text.announcing#social-block
+            a href="http://vk.com/club65166634" title="Присоединиться к сообществу Вконтакте"
+                img src="/images/vk-icon.png"
+
+        if current_user
+            div.navbar-text.announcing.pull-right#login-block #{current_user.username} (<a href="{{unbound settings.links.signout_link}}">выйти</a>)
+        else
+            div.navbar-text.announcing.pull-right#login-block
+              a href="{{unbound settings.links.signin_link}}" class="navbar-link" Войти
+    div.clear-fix
+
+div#report_button
+  = linkTo 'reports.new' classNames="btn btn-lg btn-primary" | Сообщить о проблеме
+
+div#body
+  = outlet
+
+footer
+  nav class="navbar navbar-default"
+    div.container
+        div.row
+            div.col-md-4
+                div.navbar-text.links
+                  = linkTo 'about' | О проекте
+            div.col-md-4
+                div.navbar-text.announcing.center &copy; 2013, <a href="http://www.constxife.ru/blog/tag/oblakan%20rm">constXife</a>
+            div.col-md-4
+                div.navbar-text.links
+                    | Партнёр: <a href="http://www.abakan.ru">ABAKAN.RU</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                    | Хостинг: <a href="http://www.abakannet.ru">ООО Сеть</a>

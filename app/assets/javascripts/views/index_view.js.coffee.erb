@@ -1,0 +1,48 @@
+OblakanRM.IndexView = Ember.View.extend
+  didInsertElement: ->
+    $("#global_map").height($(window).height()-106).width($(window).width());
+    map = L.map('global_map', {
+      center: [53.717, 91.43],
+      zoom: 13,
+      minZoom: 12
+      maxZoom: 17
+      editInOSMControlOptions: {
+          widget: 'attributionBox'
+          position: 'bottomleft'
+          editors: ['id']
+      }
+    })
+    textList = L.control.textlist({url: '/reports', disabled: true})
+    cityLabel = L.control.citylabel({edds: '004'})
+    textList.addTo(map)
+    cityLabel.addTo(map)
+    OblakanRM.settings.get_tile_layer().addTo(map)
+    OblakanRM.current_markers = new L.MarkerClusterGroup()
+    map.addLayer(OblakanRM.current_markers)
+
+    OblakanRM.geocode map.getCenter().lat, map.getCenter().lng, (data) ->
+        textList.enable(data.city == 'Абакан')
+        cityLabel.enable(data.city == 'Абакан', data)
+
+        if data.city == 'Абакан'
+            $('#report_button').css('opacity', '0.8')
+            $('#report_button').attr('title', '')
+        else
+            $('#report_button').css('opacity', '0.3')
+            $('#report_button').attr('title', 'Пока недоступно для вашей локации')
+
+    map.on 'moveend', ->
+        OblakanRM.geocode map.getCenter().lat, map.getCenter().lng, (data) ->
+            textList.enable(data.city == 'Абакан')
+            cityLabel.enable(data.city == 'Абакан', data)
+
+            if data.city == 'Абакан'
+                $('#report_button').css('opacity', '0.8')
+                $('#report_button').attr('title', '')
+            else
+                $('#report_button').css('opacity', '0.3')
+                $('#report_button').attr('title', 'Пока недоступно для вашей локации')
+
+    if localStorage.getItem('first_visit') == 'true' && !@get('controller.wasShow')
+        $("a.btn-sm").tooltip({placement: 'right'}).tooltip('show')
+        @set('controller.wasShow', true)

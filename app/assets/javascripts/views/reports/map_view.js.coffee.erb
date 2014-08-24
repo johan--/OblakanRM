@@ -1,0 +1,40 @@
+OblakanRM.ReportsMapView = Ember.View.extend
+  templateName: 'reports/map'
+
+  didInsertElement: ->
+    @get('controller.store').find('report', { page: -1 }).then =>
+      map = L.map('global_map', {
+        center: [53.717, 91.43],
+        zoom: 13,
+        minZoom: 12
+      })
+      OblakanRM.settings.get_tile_layer().addTo(map)
+
+      markers = new L.MarkerClusterGroup()
+      @get('controller.model').forEach (object) =>
+        marker = L.marker([object.get('latitude'), object.get('longitude')])
+        thumb = if object.get('start_photow.small_thumb.length')
+                  object.get('start_photo.small_thumb')
+                else
+                  '<%= asset_path '100x100.gif' %>'
+        user = if object.get('user.length')
+                  object.get('user.name')
+               else
+                  'Гость'
+
+        date = moment(object.get('created_at')).calendar()
+
+        popup = L.popup({ minWidth: 500 })
+                .setContent("<div class=\"pull-left cpopup-preview\"><img src=\"#{thumb}\" /></div>"  +
+                        "<div class=\"pull-left\">" +
+                        "<div class=\"cpopup-title\">" +
+                        "<a href=\"/reports/#{object.get('id')}\">#{object.get('title')}</a>" +
+                        "</div>" +
+                        "<div class=\"cpopup-content\">#{object.get('description')}</div>" +
+                        "<div class=\"cpopup-date\">#{date} сообщил #{user}</div>" +
+                        "</div>" +
+                        "<div class=\"clear-fix\"></div>"
+                        )
+        marker.bindPopup(popup)
+        markers.addLayer(marker)
+      map.addLayer(markers)

@@ -1,0 +1,13 @@
+div.events.panel.panel-default
+  div.panel-heading
+    h3.panel-title #{t 'comment' length}
+
+  div #{post.title}
+
+  = partial 'comments/form'
+
+  if length
+    ul.media-list = each comment in arrangedContent
+      render comment comment
+  else
+    p Нет никаких комментариев.

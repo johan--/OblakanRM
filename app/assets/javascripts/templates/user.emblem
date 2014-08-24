@@ -1,0 +1,7 @@
+div.container
+  ol.breadcrumb
+    li
+      = linkTo 'index' | Главная
+    li.active #{model.username}
+
+  h2 #{model.username}

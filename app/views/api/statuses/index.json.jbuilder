@@ -1,0 +1,1 @@
+json.statuses @statuses, partial: 'api/statuses/status', as: :status

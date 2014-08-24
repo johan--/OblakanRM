@@ -1,0 +1,6 @@
+div.user-inline
+  if user.username
+    i.fa.fa-user
+    | #{user.username}
+  else
+    | Гость

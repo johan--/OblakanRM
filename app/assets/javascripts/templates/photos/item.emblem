@@ -1,0 +1,12 @@
+a href=model.original_url data-lightbox="photo"
+  img.media-object.img-thumbnail width="100" alt="..." src=model.small_thumb
+
+if report.canEdit
+  div class="dropdown"
+    a data-toggle="dropdown" href="#" onclick="return false;"
+      |<span class="fa fa-cog"></span>
+    ul class="dropdown-menu" role="menu"
+      li
+        a{action "set_main"} href="#" onclick="return false;" На главную
+      li
+        a{action "delete"} href="#" onclick="return false;" Удалить

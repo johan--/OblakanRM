@@ -1,0 +1,4 @@
+div#reports_map_container
+  div#reports_map
+  div.center
+    = linkTo 'index' classNames="btn btn-primary" | <i class="fa fa-globe"></i> Большая карта

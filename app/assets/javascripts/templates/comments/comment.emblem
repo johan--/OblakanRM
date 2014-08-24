@@ -1,0 +1,31 @@
+if is_deleted
+  div.media-body Комментарий удалён
+else
+  div.head
+    div
+      if user.username
+        if user.is_male
+          | #{t 'writed'}&nbsp;
+        else
+          | #{t 'writed_female'}&nbsp;
+      else
+        | #{t 'writed'}&nbsp;
+      | <time datetime="#{unbound created_at}">#{ago created_at}</time> #{partial inline_user} &nbsp;
+      if user.is_admin
+        div.label.label-danger Администратор
+      if user.is_staff
+        div.label.label-success Администрация
+      if current_user.is_admin
+        div.actions.pull-right
+          ul.inline
+            li
+              a{action "announce" model} href="javascript:void(0);" title="Уведомить подписавшихся" data-toggle="tooltip"
+                span.fa.fa-bullhorn
+            li
+              a{action "delete" model} class="danger" href="javascript:void(0)" title="Удалить" data-toggle="tooltip"
+                span.fa.fa-trash-o
+    div.clear-fix
+  div.pull-left
+    | #{partial avatar}
+  div.media-body
+    div.content #{nl2br model.content}

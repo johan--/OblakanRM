@@ -1,0 +1,489 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require bootstrap
+ *= require leaflet
+ *= require toastr
+ *= require lightbox
+ *= require MarkerCluster.Default.css
+ *= require Leaflet.EditInOSM
+ *= require leaflet.awesome-markers
+ *= require select2
+ *= require select2-bootstrap
+ *= require_self
+ *= require_tree .
+ */
+
+@import 'report_item';
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+header {
+  width: 100%;
+
+  h2 {
+    margin: 0;
+  }
+
+  div.navbar-text.announcing {
+    color: #000;
+    font-size: larger;
+  }
+}
+
+div#body {
+  div.main.container {
+    margin-top: 50px;
+    padding-bottom: 60px;
+  }
+}
+
+.global-content {
+  min-height: 100%;
+  position:relative;
+}
+
+footer {
+  height: 50px;
+  font-size: 90%;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+
+  div.navbar-text.announcing.center {
+    text-align: center;
+    width: 100%;
+  }
+
+  div.navbar-text.links {
+    a {
+      margin-right: 1em;
+    }
+  }
+}
+
+#loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -32px;
+  margin-top: -32px;
+}
+
+#global_error {
+  text-align: center;
+  font-size: large;
+  margin-top: 10%;
+  display: none;
+}
+
+#global_map {
+  height: 600px;
+  margin-top: -20px;
+  width: 100%;
+}
+
+
+a.leaflet-control-report-text-list {
+  box-shadow: 0 1px 7px rgba(0, 0, 0, 0.65);
+  width: 28px;
+  height: 30px;
+  font-size: 14px;
+  padding: 0.4em 0.1em 0.3em 0.1em;
+  color: #000;
+}
+a.leaflet-control-report-text-list.leaflet-control-disabled {
+  color: #ccc;
+
+  &:hover, &:active {
+    background-color: #fff;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.65);
+  }
+}
+
+div.leaflet-control-report-city-label {
+  background: #fff;
+  padding: 0.5em;
+  border-radius: 0.3em;
+  opacity: 0.8;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+
+  h3 {
+    font-size: 1.4em;
+    margin: 0 0 0.3em 0;
+    text-align: center;
+  }
+
+  h4 {
+    font-size: 100%;
+  }
+}
+
+#report_button {
+  position: absolute;
+  z-index: 3;
+  top: 50px;
+  left: 42%;
+
+  a {
+    opacity: 0.8;
+    -webkit-transition: opacity 0.3s ease-in-out;
+    -moz-transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.mainPage {
+  text-align: center;
+  padding-bottom: 2em;
+
+  .support_link {
+    margin: 0.8em 0 0 0;
+    font-size: 90%;
+  }
+}
+
+input[required="required"] {
+  border: 1px solid #ffff00;
+}
+
+.object {
+  div.info {
+    float: left;
+
+    dl {
+      border: 1px solid #efefef;
+      background: #efefef;
+      border-radius: 0.3em;
+      padding: 1em;
+      margin: 0 1em 0 0;
+
+      dd {
+        margin-bottom: 0.5em;
+      }
+
+      dd:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  div.content {
+    float: left;
+  }
+}
+
+#stripe {
+  width: 100%;
+  height: 300px;
+  background: #efefef;
+
+  img {
+    text-align: center;
+  }
+}
+
+#statistic {
+  margin-top: 2em;
+  padding: 4em 0;
+  color: #fff;
+
+  h2 {
+    margin-top: 0;
+  }
+}
+
+.center {
+  text-align: center;
+}
+
+span.inbox {
+  color: orangered;
+}
+
+span.success {
+  color: yellowgreen;
+}
+
+#slides {
+  display:none;
+}
+
+.new_report {
+  form {
+    margin-left: 2em;
+    width: 315px;
+    border: 1px solid #efefef;
+    border-radius: 5px;
+    padding: 0.5em;
+
+    img {
+      margin-left: 1em;
+    }
+  }
+}
+
+div.panel {
+  width: 300px;
+  margin-top: 0;
+
+  div.panel-body {
+    ul {
+      margin: 0;
+      padding: 0;
+
+      li {
+        list-style: none;
+        margin-bottom: 0.5em;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+a.special {
+  color: #0055ff;
+}
+
+#impress {
+  .slide {
+    background: #efefef;
+    padding: 1m;
+    border-radius: 1em;
+    width: 1020px;
+    height: 450px;
+  }
+}
+
+.clear-fix {
+  clear: both;
+}
+
+div.user-inline {
+  display: inline;
+}
+
+.inline {
+  display: inline-block;
+
+  > li {
+    display: inline-block;
+  }
+}
+
+.load-more {
+  text-align: center;
+}
+
+.events {
+  width: 820px !important;
+
+  h3 {
+    margin-top: 0;
+  }
+
+  form {
+    background: #efefef;
+    overflow: hidden;
+    padding: 0.5em;
+    margin: 0 0 1em 0;
+    border: 1px solid #efefef;
+
+    div.form-group {
+      width: 85%;
+      margin-left: 110px;
+
+      textarea {
+        width: 692px;
+      }
+    }
+  }
+
+  p {
+    padding: 0 10px;
+  }
+
+  ul.media-list {
+    padding: 0 10px;
+
+    li.action {
+      div.head {
+        margin: 0.5em;
+        padding-bottom: 0.5em;
+        color: #666;
+        border-bottom: 1px dashed #efefef;
+      }
+
+      div.media-body {
+        color: #333;
+      }
+
+      margin-bottom: 1em;
+
+      div.actions {
+        ul {
+          li {
+            margin-right: 0.5em;
+          }
+          li:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+
+      .unit-name, .unit-ability {
+        background: #000;
+        width: 100px;
+        text-align: center;
+        font-size: 70%;
+      }
+
+      .unit-name {
+        color: #fff;
+      }
+      .unit-ability {
+        color: #ffff00;
+      }
+    }
+    li.action:last-child {
+      margin-bottom: inherit;
+    }
+    li.action.is-deleted {
+      div.media-body {
+        margin: 0.5em 0.5em 0 0.5em;
+        color: #ccc;
+      }
+    }
+  }
+}
+
+div small.error {
+  color: #B94A48;
+}
+
+.loading {
+  height:60px;
+  width:60px;
+  margin:0px auto;
+  position:relative;
+  -webkit-animation: rotation .6s infinite linear;
+  -moz-animation: rotation .6s infinite linear;
+  -o-animation: rotation .6s infinite linear;
+  animation: rotation .6s infinite linear;
+  border-left:6px solid rgba(0,174,239,.15);
+  border-right:6px solid rgba(0,174,239,.15);
+  border-bottom:6px solid rgba(0,174,239,.15);
+  border-top:6px solid rgba(0,174,239,.8);
+  border-radius:100%;
+}
+
+@-webkit-keyframes rotation {
+  from {-webkit-transform: rotate(0deg);}
+  to {-webkit-transform: rotate(359deg);}
+}
+
+@-moz-keyframes rotation {
+  from {-moz-transform: rotate(0deg);}
+  to {-moz-transform: rotate(359deg);}
+}
+
+@-o-keyframes rotation {
+  from {-o-transform: rotate(0deg);}
+  to {-o-transform: rotate(359deg);}
+}
+
+@keyframes rotation {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(359deg);}
+}
+
+div.load-more {
+  margin: 1em 0;
+}
+
+.cpopup {
+  @include report-item
+}
+
+.welcome {
+  position: absolute;
+  left: 30%;
+  top: 20%;
+  background: #fff;
+  padding: 1.5em;
+  line-height: 1.5;
+  opacity: 0.9;
+  border-radius: 0.5em;
+  width: 600px;
+  border: 1px solid #efefef;
+  display: none;
+
+  h2 {
+    margin: 0 0 0.5em 0;
+  }
+
+  ol {
+    margin: 0 0 0 1.2em;
+    padding: 0;
+  }
+}
+
+i.status.confirmed {
+  color: #5bc0de;
+}
+i.status.rejected {
+  color: #f0ad4e;
+}
+i.status.fixed {
+  color: #5cb85c;
+}
+
+i.fa.fa-circle {
+  font-size: 80%;
+  line-height: 1.2;
+}
+
+#vk_share, #twitter_share, #facebook_share {
+  display: inline-block;
+  margin: 0;
+  margin-right: 0.3em;
+  vertical-align: middle;
+}
+
+#login-block {
+  max-width: 20em;
+  text-align: right;
+}
+
+#address-block {
+  width: 20.8em;
+}
+
+#social-block {
+  position: relative;
+  margin-left: 20%;
+  img {
+    margin-top: -5px;
+    position: absolute;
+  }
+}

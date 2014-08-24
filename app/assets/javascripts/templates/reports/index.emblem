@@ -1,0 +1,28 @@
+div.container.reports.main
+  ol.breadcrumb
+    li
+      = linkTo 'index' | Главная
+    li.active Проблемы
+
+  div.center
+    h2 Проблемы
+
+  div.pull-left
+    // Toolbar
+  div.clear-fix
+
+  div.list.pull-left
+    if length
+      ul.media-list = each report in paginatedContent
+        render reportsItem report
+
+      div.clear-fix
+      if canLoadMore
+        div.load-more
+          button.btn.btn-default{action "loadMore"} href="" Загрузить больше
+    else
+      p Пока нет никаких сообщений о проблемах.
+
+  div.pull-left
+    if length
+      view OblakanRM.ShortMapView

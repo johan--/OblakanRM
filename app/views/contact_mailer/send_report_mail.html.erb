@@ -1,0 +1,36 @@
+<p>Добрый день!</p>
+
+<p>
+  С нашего сайта (<a href="http://report.oblakan.ru">report.oblakan.ru</a>) пришло сообщение о проблеме.
+  Короткое описание проблемы представлено здесь, но за более полной и актуальной информацией, пожалуйста,
+  пройдите на страничку проблемы — <a href="http://report.oblakan.ru/reports/<%= @report.id %>">report.oblakan.ru/reports/<%= @report.id %></a>.
+</p>
+
+<h4>Проблема</h4>
+<dl>
+  <dt>Название</dt>
+  <dd><%= @report.title %></dd>
+  <% unless @report.description.empty? %>
+      <dt>Описание</dt>
+      <dd><%= @report.description %></dd>
+  <% end %>
+  <dt>Координаты</dt>
+  <dd><%= @report.location %></dd>
+  <% if @report.address.present? %>
+  <dt>Адрес </dt>
+  <dd><%= @report.address %> <strong>(может быть определён неверно, лучше посмотреть на карте сайта)</strong></dd>
+  <% end %>
+  <dt>Сообщил</dt>
+  <dd><%= @report.user.email %></dd>
+  <% if @report.category.present? %>
+      <dt>Категория</dt>
+      <dd><%= @report.category %></dd>
+  <% end %>
+  <% if @report.start_photo.present? %>
+      <dt>Фотография</dt>
+      <dd><%= image_tag @report.start_photo.medium_thumb %></dd>
+  <% end %>
+  <dt>Ссылка</dt>
+  <dd><a href="http://report.oblakan.ru/reports/<%= @report.id %>">report.oblakan.ru/reports/<%= @report.id %></a></dd>
+</dl>
+<div class="clear"></div>

@@ -1,0 +1,6 @@
+h2 Общественная карта проблем
+
+partial 'about/about'
+
+div.center
+  button.btn.btn-default{action "close"} К карте

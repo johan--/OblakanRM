@@ -1,0 +1,11 @@
+development: &defaults
+  oblakan_id: 048dce7be73b6c22c1b8a11d06f5410bcd37384eef98eb980b305e523b06f6a5
+  oblakan_secret: bcae1c89efdb636a698493efc29e89a16497299a0ecce53d6429bb16acdcbcdd
+  oblakan_url: 'http://localhost:3000/users/auth/oblakan/callback'
+test:
+  <<: *defaults
+
+production:
+  oblakan_id: fb99c47819c344211a7db69efdae08f64521d84d36dc4bd836bb8c9f7c8ad40a
+  oblakan_secret: b045472514bc34991c31eccad5cd004c3df1ebbe5f853c538367f7f1870f97d8
+  oblakan_url: 'http://report.oblakan.ru/users/auth/oblakan/callback'

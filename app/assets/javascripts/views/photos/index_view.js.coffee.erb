@@ -1,0 +1,76 @@
+# for more details see: http://emberjs.com/guides/views/
+
+OblakanRM.PhotosIndexView = Ember.View.extend
+  didInsertElement: ->
+    controller = @get('controller')
+    store = @get('controller.store')
+
+    $('#photo_input').on 'change', (e) ->
+      photos = FileAPI.getFiles($('#photo_input'))
+      FileAPI.reset(e.currentTarget);
+
+      if photos.length > 0
+        FileAPI.filterFiles photos, (file, info) ->
+          image = /image/.test(file.type) && info
+
+          dimensions = info.width > 320 && info.height > 240
+          maxSize = file.size < 10 * FileAPI.MB
+
+          unless image
+            toastr.error '', 'Прилагаемое фото не является корректным изображением.'
+          unless dimensions
+           toastr.error '', 'Размеры фото должны превышать 320x240.'
+          unless maxSize
+           toastr.error '', 'Размер файла не должен превышать 10МБ.'
+
+          return image && dimensions && maxSize
+        , (fileList, ignore) =>
+          if (!fileList.length)
+            return false
+
+          imageList = FileAPI.filter fileList, (file) -> /image/.test(file.type)
+          FileAPI.each imageList, (imageFile) ->
+            FileAPI.Image(imageFile)
+            .resize(100, 100, 'max')
+            .get (err, image) ->
+                if err
+                  toastr.error 'Возникла какая-то ошибка'
+                else
+                  img = new Image()
+                  img.src = image.toDataURL()
+                  img.className = "media-object img-thumbnail"
+                  img.width = "100"
+                  img.setAttribute('data-uid', FileAPI.uid(imageFile))
+                  $('div#photos ul li:first').after(img)
+                  $(img).wrap('<li class="uploading"></li>')
+                  report = controller.get('report')
+                  FileAPI.upload
+                    url: '<%= OblakanRM::Application.routes.url_helpers.api_photo_upload_path %>'
+                    data:
+                      photo:
+                        entity_id: report.get('id')
+                        entity_type: 'Report'
+                    files:
+                      photos: imageFile
+                    progress: (e, file) ->
+                      percent = e.loaded/e.total*100
+                      el = $('img[data-uid="' + FileAPI.uid(file) + '"]').closest('li')
+                      if el.length
+                          el.find('div[role="progressbar"]').css('width', percent + '%')
+                    complete: (err, xhr, file) =>
+                      unless err
+                          id = JSON.parse(xhr.responseText)[0]
+                          el = $('img[data-uid="' + FileAPI.uid(imageFile) + '"]').closest('li')
+                          el.attr('data-id', id)
+                          store.find('photo', id).then (photo) ->
+                            el.remove()
+                            controller.pushObject(photo)
+                            if controller.get('arrangedContent.length') == 1
+                               store.find('report', report.get('id')).then (r) ->
+                                   r.set('start_photo_id', id)
+                                   r.set('start_photo', photo)
+                                   r.save()
+                    upload: =>
+                      el = $('img[data-uid="' + FileAPI.uid(imageFile) + '"]')
+                      if el.length
+                        el.after('<div class="progress progress-striped active"><div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div>')

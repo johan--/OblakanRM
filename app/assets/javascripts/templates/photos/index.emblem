@@ -1,0 +1,11 @@
+div.content
+  ul.list-inline.photos
+    li.add-photo
+      input.hidden type="file" id="photo_input" name="photo_input" multiple="multiple"
+        a.btn.btn-primary.add{action "add_photo"} href="#" onclick="return false;"
+          | <i class="fa fa-plus"></i>
+    if arrangedContent.length
+      each photo in arrangedContent
+        render 'photos/item' photo
+
+  div.clear-fix

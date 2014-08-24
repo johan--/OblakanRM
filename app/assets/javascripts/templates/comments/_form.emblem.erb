@@ -1,0 +1,13 @@
+form.comments role="form"
+  div.pull-left
+    if current_user
+      img.media-object width="100" height="100" src=current_user.avatar_url
+    else
+      img.media-object width="100" height="100" src="<%= asset_path 'anonym.jpg' %>"
+  div.form-group
+    = c-textarea class="form-control" placeholder="Комментарий" value=comment_content name="content"
+  div.pull-right
+    div.form-group
+      button{action "comment_submit"} type="button" id="comment_submit" class="btn btn-primary"
+        | Отправить
+  div.clear-fix

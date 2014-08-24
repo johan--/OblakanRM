@@ -1,0 +1,7 @@
+if user.username
+  if user.is_male
+    | #{t 'reported'}&nbsp;
+  else
+    | #{t 'reported_female'}&nbsp;
+else
+  | #{t 'reported'}&nbsp;

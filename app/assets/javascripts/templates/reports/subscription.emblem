@@ -1,0 +1,6 @@
+div#popover-content style="display:none"
+  div.input-group
+    input.form-control type="email" id="subscription_email" placeholder="Введите свой email"
+    span class="input-group-btn"
+      button.btn.btn-success{action "subscribe"} type="submit"
+        span.fa.fa-check

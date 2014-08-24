@@ -1,0 +1,37 @@
+div.container.new_report.main
+  ol.breadcrumb
+    li
+      = linkTo 'index' | Главная
+    li
+      = linkTo 'reports' | Проблемы
+    li.active Сообщить о проблеме
+
+  h2 Сообщить о проблеме
+
+  div#short_map.pull-left
+
+  form.pull-left role="form"
+    div.pull-left
+      div.form-group
+        = input type="text" name="title" class="form-control" value=report_title placeholder="Название проблемы *"
+
+      div.form-group
+        category-select contentBinding=categories optionLabelPath="content.title" optionValuePath="content.id" selectionBinding=selectedCategory prompt="1" optionIconPath="content.icon"
+
+      div.form-group
+        = textarea name="description" class="form-control" value=report_description rows="7" placeholder="Описание проблемы"
+
+      div.form-group
+        label Фото
+        input.form-control type="file" id="photo" name="photo"
+
+      unless current_user
+        div.form-group
+          label Для обратной связи с вами
+          = input type="text" name="user_email" class="form-control" value=user_email placeholder="Ваш email *"
+      div.form-group
+        p.help-block * - обязательные поля
+
+    div.form-group
+      button{action "submit"} type="button" class="btn btn-primary"
+        | Сообщить

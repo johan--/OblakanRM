@@ -1,0 +1,157 @@
+OblakanRM.ReportController = Ember.ObjectController.extend
+  current_user: OblakanRM.get_current_user()
+  isEditable: false
+  statuses: []
+  categories: []
+  anonymousEmail: false
+
+  isSubscribed: (->
+      @get('model.is_subscribed')
+  ).property()
+
+  didSubscribed: (->
+      @set('isSubscribed', @get('model.is_subscribed'))
+  ).observes('model.is_subscribed')
+
+  canEdit: (->
+      model = @get('model')
+
+      if @current_user?.is_admin?
+          return true
+
+      if 'new' == model.get('status.name') && (!model.get('user.username')? || parseInt(model.get('user')?.get('id')) == @current_user?.id)
+          return true
+
+      return false
+
+  ).property('model.user')
+
+  edit_button_text: (->
+      @getEditButtonText()
+  ).property()
+
+  didEditable: (->
+    @set('edit_button_text', @getEditButtonText())
+
+    marker = window.OblakanRM.current_marker
+
+    if @get('isEditable')
+        marker.dragging.enable()
+        @set('statuses', @get('store').find('status'))
+        @set('categories', @get('store').find('category'))
+    else
+        marker.dragging.disable()
+  ).observes('isEditable')
+
+  getEditButtonText: ->
+      if @get('isEditable')
+          'Сохранить'
+      else
+          'Изменить'
+
+  actions:
+    edit: ->
+        @set('isEditable', !@get('isEditable'))
+
+        unless @get('isEditable')
+            model = @get('model')
+            if @get('selectedStatus')
+                model.set('status_id', @get('selectedStatus'))
+            if @get('selectedCategory')
+                model.set('category_id', @get('selectedCategory'))
+            model.save().then =>
+                toastr.success('', 'Проблема сохранена')
+            , (reason) ->
+                console.log reason.responseText
+                toastr.error(reason, 'Возникла ошибка при сохранении проблемы')
+
+    deleteConfirm: ->
+        $('#modal').modal()
+
+    delete: ->
+        model = @get('model')
+        model.set('is_deleted', !model.get('is_deleted'))
+        model.save().then =>
+            toastr.success('', 'Проблема удалена')
+            @transitionToRoute('reports')
+        , (reason) ->
+            toastr.error(reason, 'Возникла ошибка при удалении проблемы')
+
+    subscribe: () ->
+        store = @get('store')
+
+        mySubscription_hash = {
+            subscribe_type: 'Report'
+            subscribe_id: @get('model').get('id')
+        }
+
+        $('#subscribe_button').attr('disabled', 'disabled')
+
+        if @current_user?
+            mySubscription_hash.user_id = @current_user.id
+            mySubscription = @store.createRecord('subscriber', mySubscription_hash)
+            mySubscription.save().then =>
+                @set('isSubscribed', true)
+                console.log @get('isSubscribed')
+                $('#subscribe_button').removeAttr('disabled')
+                toastr.success('', 'Вы подписались на изменения в проблеме')
+            , (reason) ->
+                $('#subscribe_button').removeAttr('disabled')
+                errors = reason.responseJSON
+                message = ""
+
+                if errors['user_id']?
+                    message = errors['user_id'].join(', ')
+                if errors['email']?
+                    message = errors['email'].join(', ')
+
+                toastr.error(message, 'Не удалось подписаться на проблему')
+        else
+            subscriber_email = $('#subscription_email').val()
+
+            if subscriber_email?
+                $('#subscribe_button').popover('hide')
+
+                user_hash = {
+                    email: subscriber_email
+                }
+
+                user = store.createRecord('user', user_hash)
+                user.save().then =>
+                    mySubscription_hash.user_id = user.get('id')
+                    mySubscription = @store.createRecord('subscriber', mySubscription_hash)
+                    mySubscription.save().then =>
+                        $('#subscribe_button').removeAttr('disabled')
+                        toastr.success('', 'Вы подписались на изменения в проблеме')
+                    , (reason) ->
+                        $('#subscribe_button').removeAttr('disabled')
+                        errors = reason.responseJSON
+                        message = ""
+
+                        if errors['user_id']?
+                            message = errors['user_id'].join(', ')
+                        if errors['email']?
+                            message = errors['email'].join(', ')
+
+                        toastr.error(message, 'Не удалось подписаться на проблему')
+                , (reason) ->
+                    $('#subscribe_button').removeAttr('disabled')
+                    toastr.error(reason.responseText, 'Не удалось подписаться на проблему')
+
+    unsubscribe: ->
+        options = { by_user: @current_user.id, by_stype: 'Report', by_sid: @get('model.id') }
+        controller = @
+        @get('store').find('subscriber', options).then (result) ->
+            subscriber = result.objectAt(0)
+            if subscriber
+                subscriber.deleteRecord()
+                subscriber.save().then =>
+                    controller.set('isSubscribed', false)
+                    toastr.success('', 'Подписка на события удалена')
+                , (reason) ->
+                    toastr.error(reason, 'Возникла ошибка при удалении подписки')
+            else
+                toastr.error('', 'Подписки не найдено. Вы вероятно не подписаны.')
+
+    add_photo: ->
+        $('#photo_input').click()

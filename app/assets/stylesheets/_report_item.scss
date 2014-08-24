@@ -1,0 +1,63 @@
+@mixin report-item {
+  padding: 0 0.1em;
+
+  a {
+    display: block;
+    color: inherit;
+    padding: 0 0.5em 0.5em 0.5em;
+    overflow: hidden;
+
+    &:hover {
+      background: #efefef;
+      text-decoration: none;
+    }
+  }
+
+  div.head {
+    margin: 0.5em;
+  }
+
+  div.left-column {
+    float: left;
+
+    div.subscribers {
+      padding: 0.3em;
+      background: #efefef;
+      border: 1px solid #ccc;
+      border-bottom-left-radius: 0.3em;
+      border-bottom-right-radius: 0.3em;
+      text-align: center;
+      font-size: 90%;
+      width: 100px;
+    }
+  }
+
+  div.media-body {
+    margin: 0.5em 0.5em 0 0.5em;
+
+    div.content {
+      margin-left: 1em;
+
+      div.description {
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: 4em;
+      }
+    }
+  }
+
+  h4 {
+    margin: 0 0 0.3em 0;
+    padding: 0;
+  }
+
+  div.footer, div.address {
+    color: #666;
+    font-size: 90%;
+  }
+
+  div.footer {
+    padding: 0.5em 0;
+  }
+}

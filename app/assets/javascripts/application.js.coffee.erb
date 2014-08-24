@@ -1,0 +1,111 @@
+#= require sugar-1.4
+#= require jquery.min
+#= require moment.min
+#= require bootstrap.min
+#= require handlebars
+#= require ember
+#= require ember-data
+#= require i18next-1.7.1.min
+#= require locales/ru
+#= require jquery.autosize.min
+#= require FileAPI.min
+#= require toastr.min
+#= require select2.min
+#= require leaflet
+#= require leaflet.markercluster
+#= require leaflet.awesome-markers.min
+#= require Leaflet.EditInOSM
+#= require L.TextList
+#= require L.CityLabel
+#= require lightbox-2.6.min
+#= require jquery.validate.min
+#= require mycustommarker
+#= require_self
+#= require oblakan_rm
+
+L.Icon.Default.imagePath = "/images"
+moment.lang('ru')
+i18n.init({lng:'ru', resStore: window.i18resources})
+
+toastr.options = {
+    positionClass: "toast-bottom-right"
+}
+
+Ember.View.reopen
+    didInsertElement: ->
+        @._super()
+        Ember.run.scheduleOnce('afterRender', @, @afterRenderEvent)
+    ,
+    afterRenderEvent: ->
+
+jQuery.validator.setDefaults
+    errorPlacement: (error, element) ->
+        if(element.parent().hasClass('input-prepend') || element.parent().hasClass('input-append'))
+            error.insertAfter(element.parent())
+        else
+            error.insertAfter(element)
+    ,
+    errorElement: "small"
+    wrapper: "div"
+    highlight: (element) ->
+        $(element).closest('.form-group').addClass('has-error')
+    success: (element) ->
+        $(element).closest('.form-group').removeClass('has-error')
+
+$.ajaxSetup
+    beforeSend: (xhr) ->
+        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+
+# for more details see: http://emberjs.com/guides/application/
+window.OblakanRM = Ember.Application.create
+  get_current_user: ->
+    content = $('meta[name="current-user"]').attr('content')
+    if content
+        jQuery.parseJSON(content)
+  settings: jQuery.parseJSON($('meta[name="settings"]').attr('content'))
+
+OblakanRM.current_form = {}
+
+if localStorage.getItem('first_visit')?
+    localStorage.setItem('first_visit', false)
+
+unless localStorage.getItem('first_visit')?
+    localStorage.setItem('first_visit', true)
+
+OblakanRM.settings.get_tile_layer = ->
+    L.tileLayer("http://maps.oblakan.ru/tiles/{z}/{x}/{y}.png", {
+        maxZoom: 17
+        minZOom: 13
+        attribution: '&copy; <a rel="nofollow" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    })
+
+OblakanRM.geocode = (lat, lng, callback) ->
+    unless callback
+        callback = (data, textStatus, jqXHR) ->
+            toastr.info data
+
+    $.ajax
+        data:
+            location:
+                latitude: lat
+                longitude: lng
+        type: 'POST'
+        url: '/api/reports/geocode'
+        success: callback
+        error: (jqXHR, textStatus, errorThrown) ->
+            console.log textStatus
+
+$(document).ready ->
+  $('#loader').hide()
+
+#OblakanRM.Route = Ember.Route.extend
+#    actions:
+#        error: (error, transition) ->
+#            if error.status == 404
+#                return @transitionTo 'notFound'
+#
+#            return @transitionTo 'undefinedError'
+
+#window.onerror = ->
+#  document.getElementById("global_content").style.display = 'none'
+#  document.getElementById("global_error").style.display = 'block'

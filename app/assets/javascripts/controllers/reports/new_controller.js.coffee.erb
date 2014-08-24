@@ -1,0 +1,203 @@
+OblakanRM.ReportsNewController = Ember.Controller.extend
+  current_user: OblakanRM.get_current_user()
+  categories: []
+
+  validate: ->
+      rules = {
+          title: {
+              required: true
+          }
+      }
+
+      unless @current_user?
+          rules.user_email = {
+            required: true
+            email: true
+          }
+
+      form = $('form')
+      form.validate
+        rules:
+            rules
+        messages:
+            title:
+                required: 'Придумайте название'
+            user_email:
+                required: 'Укажите свой email'
+      form.valid()
+
+  clearForm: ->
+      @set('report_title', '')
+      @set('report_description', '')
+      @set('user_email', '')
+      @set('selectedCategory', '')
+
+  actions:
+    submit: ->
+      if @validate()
+          button = $('button')
+          button.html('Загрузка...')
+          $('form input, form textarea, form button, form select').each (index, element) ->
+              $(element).attr('disabled', 'disabled')
+
+          store = @get('store')
+
+          report_hash = {
+              title: @get('report_title')
+              longitude: OblakanRM.current_form.longitude
+              latitude: OblakanRM.current_form.latitude
+              description: ''
+          }
+
+          if @get('report_description')
+            report_hash.description = @get('report_description')
+
+          if @get('selectedCategory')
+            report_hash.category_id = @get('selectedCategory.id')
+
+          if @current_user?
+              report_hash.user_id = @current_user.id
+              report = store.createRecord('report', report_hash)
+
+              report.save().then =>
+                  photo = FileAPI.getFiles($('#photo'))
+
+                  if photo.length > 0
+                      FileAPI.filterFiles photo, (file, info) ->
+                          image = /image/.test(file.type) && info
+
+                          dimensions = info.width > 320 && info.height > 240
+                          maxSize = file.size < 10 * FileAPI.MB
+
+                          unless image
+                              toastr.error '', 'Прилагаемое фото не является корректным изображением.'
+                          unless dimensions
+                              toastr.error '', 'Размеры фото должны превышать 320x240.'
+                          unless maxSize
+                              toastr.error '', 'Размер файла не должен превышать 10МБ.'
+
+                          return image && dimensions && maxSize
+                      , (fileList, ignore) =>
+                          if (ignore.length)
+                              console.log 'ignore length'
+
+                          if (!fileList.length)
+                              return false
+
+                          xhr = FileAPI.upload
+                              url: '<%= OblakanRM::Application.routes.url_helpers.api_photo_upload_path %>'
+                              data:
+                                  start_photo: true
+                                  photo:
+                                      entity_id: report.get('id')
+                                      entity_type: 'Report'
+                              files:
+                                  photos: fileList
+                              fileprogress: (evt) ->
+                                  percent = evt.loaded/evt.total*100
+                                  console.log percent
+                              progress: (evt) ->
+                                  percent = evt.loaded/evt.total*100
+                                  console.log percent
+                              complete: (err, xhr) =>
+                                  if err
+                                      button.html('Сообщить')
+                                      $('form input, form textarea, form button').each (index, element) ->
+                                        $(element).removeAttr('disabled')
+                                      toastr.error(err, 'Возникла ошибка при добавлении фото')
+                                  else
+                                      id = jQuery.parseJSON(xhr.responseText)?[0]
+                                      @store.find('photo', id).then (photo) =>
+                                          report.set('start_photo', photo)
+                                          report.set('start_photo_id', photo.get('id'))
+                                          report.save().then =>
+                                              @clearForm()
+                                              @transitionToRoute('report', report.id)
+                  else
+                      @clearForm()
+                      @transitionToRoute('report', report.id)
+              , (reason) ->
+                  console.log reason.responseText
+                  button.html('Сообщить')
+                  $('form input, form textarea, form button').each (index, element) ->
+                      $(element).removeAttr('disabled')
+                  toastr.error(reason, 'Возникла ошибка при добавлении проблемы')
+          else
+              user_hash = {
+                email: @get('user_email')
+              }
+
+              user = store.createRecord('user', user_hash)
+              report_hash.user_id = null
+              user.save().then =>
+                  report_hash.user_id = user.get('id')
+                  report = store.createRecord('report', report_hash)
+                  report.save().then (=>
+                      photo = FileAPI.getFiles($('#photo'))
+
+                      if photo.length > 0
+                          FileAPI.filterFiles photo, (file, info) ->
+                              image = /image/.test(file.type) && info
+
+                              dimensions = info.width > 320 && info.height > 240
+                              maxSize = file.size < 10 * FileAPI.MB
+
+                              unless image
+                                  toastr.error '', 'Прилагаемое фото не является корректным изображением.'
+                              unless dimensions
+                                  toastr.error '', 'Размеры фото должны превышать 320x240.'
+                              unless maxSize
+                                  toastr.error '', 'Размер файла не должен превышать 10МБ.'
+
+                              return image && dimensions && maxSize
+                          , (fileList, ignore) =>
+                              if (ignore.length)
+                                  console.log 'ignore length'
+
+                              if (!fileList.length)
+                                  return false
+
+                              xhr = FileAPI.upload
+                                  url: '<%= OblakanRM::Application.routes.url_helpers.api_photo_upload_path %>'
+                                  data:
+                                      start_photo: true
+                                      photo:
+                                          entity_id: report.get('id')
+                                          entity_type: 'Report'
+                                  files:
+                                      photos: fileList
+                                  fileprogress: (evt) ->
+                                      percent = evt.loaded/evt.total*100
+                                      console.log percent
+                                  progress: (evt) ->
+                                      percent = evt.loaded/evt.total*100
+                                      console.log percent
+                                  complete: (err, xhr) =>
+                                      if err
+                                          button.html('Сообщить')
+                                          $('form input, form textarea, form button').each (index, element) ->
+                                              $(element).removeAttr('disabled')
+                                          toastr.error(err, 'Возникла ошибка при добавлении фото')
+                                      else
+                                          id = jQuery.parseJSON(xhr.responseText)?[0]
+                                          @store.find('photo', id).then (photo) =>
+                                              report.set('start_photo', photo)
+                                              report.set('start_photo_id', photo.get('id'))
+                                              report.save().then =>
+                                                  @clearForm()
+                                                  @transitionToRoute('report', report.id)
+                      else
+                          @clearForm()
+                          @transitionToRoute('report', report.id)
+                  ), (reason) ->
+                      toastr.error(reason, 'Возникла ошибка при добавлении проблемы')
+
+                      button.html('Сообщить')
+                      $('form input, form textarea, form button').each (index, element) ->
+                        $(element).removeAttr('disabled')
+              , (reason) ->
+                  toastr.error(reason.responseText, 'Возникла ошибка при добавлении проблемы')
+
+                  button.html('Сообщить')
+                  $('form input, form textarea, form button').each (index, element) ->
+                      $(element).removeAttr('disabled')

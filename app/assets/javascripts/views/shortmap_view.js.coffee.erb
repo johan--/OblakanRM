@@ -1,0 +1,19 @@
+OblakanRM.ShortMapView = Ember.View.extend
+  templateName: 'shortmap'
+
+  didInsertElement: ->
+      elementName = 'reports_map_container'
+      map = L.map('reports_map', {
+        center: [53.717, 91.43],
+        zoom: 13
+      })
+      OblakanRM.settings.get_tile_layer().addTo(map)
+      window.OblakanRM.current_map = map
+
+      $(window).scroll ->
+        if $(window).scrollTop() > 240
+            $('#' + elementName).css('position', 'fixed')
+            $('#' + elementName).css('top', 0)
+        else
+            $('#' + elementName).css('position', 'absolute')
+            $('#' + elementName).css('top', 'auto')

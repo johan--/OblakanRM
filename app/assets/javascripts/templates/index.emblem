@@ -1,0 +1,4 @@
+div#global_map
+ul.hidden = each report in content
+    render reportsPopupItem report
+render welcome

@@ -1,0 +1,10 @@
+div.container
+  ol.breadcrumb
+    li
+      = linkTo 'index' | Главная
+    li
+      = linkTo 'reports.index' | Проблемы
+
+  div.center
+    h2 [unknown]
+    h4 Произошла странная ошибка.

@@ -1,0 +1,83 @@
+div.container.main
+  ol.breadcrumb
+    li
+      = linkTo 'index' | Главная
+    li
+      = linkTo 'reports.index' | Проблемы
+    li.active #{title}
+
+  div.report.pull-left.panel.panel-default
+    div.panel-heading
+      if isEditable
+        = input type="text" class="form-control" value=title placeholder="Название проблемы"
+      else
+        h3.panel-title №#{id}. #{title}
+    div{{bind-attr class="status.name :status"}}
+      if isEditable
+        if current_user.is_admin
+          o-select class="form-control btn-sm" contentBinding="statuses" optionLabelPath="content.nameTranslate" optionValuePath="content.id" valueBinding="selectedStatus" selectionBinding="model.status"
+        else
+          | #{status.nameTranslate}
+      else
+        | #{status.nameTranslate}
+
+    ul.nav.nav-tabs
+      li.active
+        a href="#general" <i class="fa fa-home"></i> Основное
+      li
+        a#map_link href="#map" <i class="fa fa-map-marker"></i> Карта
+      li
+        a href="#photos" <i class="fa fa-camera"></i> Фото <span class="badge">#{photos.length}</span>
+
+    div class="tab-content"
+      div#general.tab-pane.active
+        partial 'reports/general'
+
+      div#map.tab-pane
+        partial 'reports/map'
+
+      div#photos.tab-pane
+        render 'photos/index' photos
+
+    div.panel
+      div.user.pull-left
+        if isSubscribed
+          button{action "unsubscribe"} type="button" class="btn btn-danger btn-primary" id="unsubscribe_button" data-toggle="tooltip" title="Отписаться от изменений"
+            i.fa.fa-eye-slash
+        else
+          if current_user
+            button{action "subscribe"} type="button" class="btn btn-default btn-primary" id="subscribe_button" data-toggle="tooltip" title="Подписаться на изменения"
+              i.fa.fa-eye
+          else
+            button type="button" class="btn btn-default btn-primary" id="subscribe_button" data-toggle="tooltip" title="Подписаться на изменения"
+              i.fa.fa-eye
+        button type="button" id="share_button" class="btn btn-primary btn-default" data-toggle="tooltip" title="Поделиться в социальных сетях"
+          i.fa.fa-share
+        render ReportsSubscription parentSelector="#subscribe_button" contentSelector="#popover-content" templateName="reports/subscription"
+        render ReportsShare parentSelector="#share_button" contentSelector="#popover-share-content" templateName="reports/share"
+      if canEdit
+        div.control.pull-right
+          button{action "edit"} type="button" class="btn btn-default btn-primary" id="edit_button"
+            i.fa.fa-edit
+            | &nbsp;#{edit_button_text}
+          button{action "deleteConfirm"} type="button" class="btn btn-default btn-danger" id="delete_button" data-toggle="tooltip" title="Удалить"
+            i.fa.fa-trash-o
+      div.clear-fix
+
+  partial 'reports/near'
+
+  div.clear-fix
+
+  render comments comments
+
+div class="modal fade" id="modal"
+  div class="modal-dialog"
+    div class="modal-content"
+      div class="modal-header"
+        button type="button" class="close" data-dismiss="modal" aria-hidden="true" &times;
+        h4 class="modal-title" Удалить сообщение о проблеме
+      div class="modal-body"
+        p Вы действительно хотите удалить ваше сообщение о проблеме?
+      div class="modal-footer"
+        button{action "delete"} type="button" class="btn btn-default btn-danger" data-dismiss="modal" Удалить
+        button type="button" class="btn btn-default" data-dismiss="modal" Отмена

@@ -1,0 +1,28 @@
+unless is_deleted
+  = link-to 'report' report
+      div.head.left-column
+        if report.start_photo
+          img.media-object width="100" src=report.start_photo.small_thumb alt="..."
+        else
+          img.media-object width="100" src="<%= asset_path '100x100.gif' %>" alt="..."
+        div.subscribers #{t 'subscriber' subscribers_count}
+      div.media-body
+        div.content
+          h4
+            i.fa.status
+            |&nbsp;#{title}
+          if address
+            div.address
+                div #{short_address}
+
+          div.description #{nl2br description}
+
+          div.footer
+            time
+            | &nbsp; #{partial inline_reported} #{partial inline_user}
+
+            if comments_count
+              | &nbsp;&nbsp;
+              i.fa.fa-comments title="Комментарии"
+              | #{comments_count}
+  div.clear-fix

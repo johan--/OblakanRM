@@ -1,0 +1,24 @@
+# for more details see: http://emberjs.com/guides/controllers/
+
+OblakanRM.CommentController = Ember.ObjectController.extend
+  current_user: OblakanRM.get_current_user()
+
+  actions:
+    delete: ->
+      model = @get('model')
+      model.set('is_deleted', !model.get('is_deleted'))
+      model.save().then =>
+          toastr.success('', 'Комментарий удалён')
+        , (reason) ->
+          toastr.error(reason, 'Возникла ошибка при удалении комментария')
+
+    announce: ->
+      model = @get('model')
+
+      $.ajax
+        type: 'POST'
+        url: "/api/comments/#{model.get('id')}/announce"
+        dataType: 'json'
+        complete: (xhr) =>
+            console.log xhr.responseText
+            toastr.success('', 'Рассылка комментария проведена')

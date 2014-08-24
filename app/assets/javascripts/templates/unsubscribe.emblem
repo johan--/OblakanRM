@@ -1,0 +1,9 @@
+div.container.center
+  h2 Отписаться от событий
+
+  if isDone
+    button{action "redirectToMain"} type="button" class="btn btn-primary"
+      | Перейти на главную
+  else
+    button{action "unsubscribe"} type="button" class="btn btn-danger"
+      | Отписаться

@@ -1,0 +1,2 @@
+class CommentAttachmentsController < ApplicationController
+end

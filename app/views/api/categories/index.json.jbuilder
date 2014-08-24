@@ -1,0 +1,1 @@
+json.categories @categories, partial: 'api/categories/category', as: :category
